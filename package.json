@@ -1,0 +1,34 @@
+{
+	"name": "styleguru",
+	"version": "0.0.1",
+	"description": "Report code style inconsistencies, and optionally fix them",
+	"keywords": [
+		"javascript",
+		"style",
+		"lint"
+	],
+	"homepage": "http://github.com/wibblymat/styleguru",
+	"bugs": {
+		"url": "https://github.com/wibblymat/styleguru/issues"
+	},
+	"author": {
+		"name": "Mat Scales",
+		"email": "mat@wibbly.org.uk",
+		"url": "http://github.com/wibblymat"
+	},
+	"main": "lib/styleguru.js",
+	"repository": {
+		"type": "git",
+		"url": "http://github.com/wibblymat/styleguru"
+	},
+	"scripts": {
+		"dev": "grunt",
+		"test": "grunt test"
+	},
+	"devDependencies": {
+		"grunt": "0.3.x"
+	},
+	"licenses": [{
+		"type": "MIT"
+	}]
+}
