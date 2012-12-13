@@ -1,0 +1,14 @@
+#!/usr/bin/env node
+"use strict";
+
+if(process.argv.length < 3)
+{
+	console.log("Must specify a file");
+	process.exit(1);
+}
+
+var fs = require("fs");
+var util = require("util");
+var styleguru = require("../lib/styleguru.js");
+var source = fs.readFileSync(process.argv[2], "utf-8");
+console.log(util.inspect(styleguru.parse(source), false, null));
