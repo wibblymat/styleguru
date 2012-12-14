@@ -29,6 +29,15 @@ module.exports = function(grunt) {
 					ui: "tdd",
 					reporter: "spec"
 				}
+			},
+			coverage: {
+				src: "test/*.js",
+				options: {
+					timeout: 500,
+					ignoreLeaks: false,
+					ui: "tdd",
+					reporter: "html-cov"
+				}
 			}
 		}
 	});
@@ -36,7 +45,8 @@ module.exports = function(grunt) {
 	grunt.loadNpmTasks("grunt-simple-mocha");
 
 	// Default task.
-	grunt.registerTask("default", "lint simplemocha");
-	grunt.registerTask("test", "simplemocha");
+	grunt.registerTask("default", "lint simplemocha:all");
+	grunt.registerTask("test", "simplemocha:all");
+	grunt.registerTask("coverage", "simplemocha:coverage");
 
 };

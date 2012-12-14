@@ -1,8 +1,10 @@
 /*global suite, test*/
 "use strict";
 var assert = require("chai").assert;
-var styleguru = require("../lib/styleguru.js");
 var fs = require("fs");
+
+var path = process.env.STYLEGURU_COVERAGE ? "../lib-coverage" : "../lib";
+var styleguru = require(path + "/styleguru.js");
 
 var fixtures = {
 	"styleguru": fs.readFileSync(__dirname + "/../lib/styleguru.js").toString(),
