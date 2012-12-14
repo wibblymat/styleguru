@@ -42,61 +42,6 @@ suite("Basics", function()
 	});
 });
 
-suite("Whitespace detection", function()
-{
-	var whitespaceSource = "a;  a;a   ;\ta;\n\t\ta ;";
-	var nodes = {
-		"none": {range: [0, 1]},
-		"before": {range: [4, 5]},
-		"after": {range: [6, 7]},
-		"tab": {range: [12, 13]},
-		"newlineTab": {range: [17, 18]},
-	};
-
-	suite("Outer whitespace", function()
-	{
-		test("detects absence of whitespace", function()
-		{
-			assert.deepEqual(
-				styleguru.getSurroundingWhitespace(nodes.none, whitespaceSource),
-				["", ""]
-			);
-		});
-
-		test("detects whitespace before", function()
-		{
-			assert.deepEqual(
-				styleguru.getSurroundingWhitespace(nodes.before, whitespaceSource),
-				["  ", ""]
-			);
-		});
-
-		test("detects whitespace after", function()
-		{
-			assert.deepEqual(
-				styleguru.getSurroundingWhitespace(nodes.after, whitespaceSource),
-				["", "   "]
-			);
-		});
-
-		test("detects tabs", function()
-		{
-			assert.deepEqual(
-				styleguru.getSurroundingWhitespace(nodes.tab, whitespaceSource),
-				["\t", ""]
-			);
-		});
-
-		test("detects mixed", function()
-		{
-			assert.deepEqual(
-				styleguru.getSurroundingWhitespace(nodes.newlineTab, whitespaceSource),
-				["\n\t\t", " "]
-			);
-		});
-	});
-});
-
 suite("Default style", function()
 {
 	suite("Quotes", function()
