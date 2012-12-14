@@ -53,7 +53,7 @@ suite("Whitespace detection", function()
 		"newlineTab": {range: [17, 18]},
 	};
 
-	suite("Preceding whitespace", function()
+	suite("Outer whitespace", function()
 	{
 		test("detects absence of whitespace", function()
 		{

@@ -3,6 +3,7 @@
 "all possible statement/expression types without crashing";
 var a = 1;
 var _ = 2;
+var y;
 var foo = $;
 var bar = null, baz = true;
 var quux = [];
@@ -170,3 +171,6 @@ switch(x)
 		y = 10;
 }
 
+for(x = 0, y = 1; false;)
+{
+}
