@@ -4,12 +4,16 @@ var assert = require("chai").assert;
 var styleguru = require("../lib/styleguru.js");
 var fs = require("fs");
 
+var fixtures = {
+	"styleguru": fs.readFileSync(__dirname + "/../lib/styleguru.js").toString(),
+	"sample": fs.readFileSync(__dirname + "/fixtures/sample.js").toString(),
+	"basic": fs.readFileSync(__dirname + "/fixtures/basic.js").toString()
+};
+
 suite("Basics", function()
 {
 	suite("parse()", function()
 	{
-		var source = fs.readFileSync(__dirname + "/../lib/styleguru.js").toString();
-
 		test("parse() method should exist", function()
 		{
 			assert.ok(styleguru.parse);
@@ -21,14 +25,74 @@ suite("Basics", function()
 			assert.isArray(styleguru.parse(""));
 		});
 
-		test.skip("invalid JS returns an error", function()
+		test("invalid JS returns an error", function()
 		{
-			assert.deepEqual(styleguru.parse("fi"), []);
+			assert.Throw(styleguru.parse.bind(null, "if(;)"), Error, /Unexpected token/);
 		});
 
-		test.skip("styleguru source code passes default lint", function()
+		test("styleguru source code passes default lint", function()
 		{
-			assert.lengthOf(styleguru.parse(source), 0);
+			assert.lengthOf(styleguru.parse(fixtures.styleguru), 0);
+		});
+
+		test("all basic language features can pass", function()
+		{
+			assert.lengthOf(styleguru.parse(fixtures.basic), 0);
+		});
+	});
+});
+
+suite("Whitespace detection", function()
+{
+	var whitespaceSource = "a;  a;a   ;\ta;\n\t\ta ;";
+	var nodes = {
+		"none": {range: [0, 1]},
+		"before": {range: [4, 5]},
+		"after": {range: [6, 7]},
+		"tab": {range: [12, 13]},
+		"newlineTab": {range: [17, 18]},
+	};
+
+	suite("Preceding whitespace", function()
+	{
+		test("detects absence of whitespace", function()
+		{
+			assert.deepEqual(
+				styleguru.getSurroundingWhitespace(nodes.none, whitespaceSource),
+				["", ""]
+			);
+		});
+
+		test("detects whitespace before", function()
+		{
+			assert.deepEqual(
+				styleguru.getSurroundingWhitespace(nodes.before, whitespaceSource),
+				["  ", ""]
+			);
+		});
+
+		test("detects whitespace after", function()
+		{
+			assert.deepEqual(
+				styleguru.getSurroundingWhitespace(nodes.after, whitespaceSource),
+				["", "   "]
+			);
+		});
+
+		test("detects tabs", function()
+		{
+			assert.deepEqual(
+				styleguru.getSurroundingWhitespace(nodes.tab, whitespaceSource),
+				["\t", ""]
+			);
+		});
+
+		test("detects mixed", function()
+		{
+			assert.deepEqual(
+				styleguru.getSurroundingWhitespace(nodes.newlineTab, whitespaceSource),
+				["\n\t\t", " "]
+			);
 		});
 	});
 });
@@ -149,7 +213,7 @@ suite("Default style", function()
 		test("spaces around operator enforced", function()
 		{
 			assert.equal(styleguru.parse("a&&b")[0].type,
-				styleguru.messages.logicalOperatorSingleSpaceBeforeAfter);
+				styleguru.messages.operatorSingleSpaceBeforeAfter);
 		});
 	});
 
@@ -162,9 +226,12 @@ suite("Default style", function()
 			assert.lengthOf(styleguru.parse(statement), 0);
 		});
 
-		test.skip("fail on bad whitespace", function()
+		test("fail on bad whitespace", function()
 		{
-			assert.lengthOf(styleguru.parse("for(var  i in \tfoo) {}"), 0);
+			var result = styleguru.parse("for(var  i in \tfoo) {}");
+			assert.lengthOf(result, 2);
+			assert.equal(result[0].type, styleguru.messages.singleSpace);
+			assert.equal(result[1].type, styleguru.messages.newlineAfterOpenBrace);
 		});
 	});
 
@@ -181,6 +248,33 @@ suite("Default style", function()
 		test("acceptes valid expression", function()
 		{
 			assert.lengthOf(styleguru.parse("new Array()"), 0);
+		});
+	});
+
+	suite("Identifiers", function()
+	{
+		test("accepts camelCase identifier", function()
+		{
+			assert.lengthOf(styleguru.parse("var fooBar = 1;"), 0);
+			assert.lengthOf(styleguru.parse("var foo = 1;"), 0);
+			assert.lengthOf(styleguru.parse("var fOO = 1;"), 0);
+		});
+
+		test("accepts TitleCase identifier", function()
+		{
+			assert.lengthOf(styleguru.parse("a = new XMLHttpRequest();"), 0);
+		});
+
+		test("accepts $ or _", function()
+		{
+			assert.lengthOf(styleguru.parse("var $ = 1"), 0);
+			assert.lengthOf(styleguru.parse("var _ = 1"), 0);
+		});
+
+		test("rejects $ or _ in a longer name", function()
+		{
+			assert.equal(styleguru.parse("$e")[0].type,
+				styleguru.messages.identifierCamelCase);
 		});
 	});
 });
