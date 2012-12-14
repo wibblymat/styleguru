@@ -229,9 +229,10 @@ suite("Default style", function()
 		test("fail on bad whitespace", function()
 		{
 			var result = styleguru.parse("for(var  i in \tfoo) {}");
-			assert.lengthOf(result, 2);
+			assert.lengthOf(result, 3);
 			assert.equal(result[0].type, styleguru.messages.singleSpace);
-			assert.equal(result[1].type, styleguru.messages.newlineAfterOpenBrace);
+			assert.equal(result[1].type, styleguru.messages.singleSpace);
+			assert.equal(result[2].type, styleguru.messages.newlineAfterOpenBrace);
 		});
 	});
 
@@ -275,6 +276,57 @@ suite("Default style", function()
 		{
 			assert.equal(styleguru.parse("$e")[0].type,
 				styleguru.messages.identifierCamelCase);
+		});
+	});
+
+	suite("Assignment", function()
+	{
+		test("simple", function()
+		{
+			assert.lengthOf(styleguru.parse("a = 1"), 0);
+			assert.lengthOf(styleguru.parse("a = \"1\""), 0);
+			assert.lengthOf(styleguru.parse("a = b"), 0);
+			assert.lengthOf(styleguru.parse("a = true"), 0);
+		});
+
+		test("function expression", function()
+		{
+			assert.lengthOf(styleguru.parse("var a = function(x)\n{\n\treturn x;\n};\n"), 0);
+		});
+
+		test("fail on bad whitespace", function()
+		{
+			assert.lengthOf(styleguru.parse("a=1"), 1);
+			assert.lengthOf(styleguru.parse("a =1"), 1);
+			assert.lengthOf(styleguru.parse("a= 1"), 1);
+		});
+	});
+
+	suite("Var statements", function()
+	{
+		test("single item, no init", function()
+		{
+			assert.lengthOf(styleguru.parse("var x"), 0);
+		});
+
+		test("single item, init", function()
+		{
+			assert.lengthOf(styleguru.parse("var x = 1"), 0);
+		});
+
+		test("two items, no init", function()
+		{
+			assert.lengthOf(styleguru.parse("var x, y;"), 0);
+		});
+
+		test("two items, init", function()
+		{
+			assert.lengthOf(styleguru.parse("var x = 1, y = 2;"), 0);
+		});
+
+		test("two items, split on multiple lines", function()
+		{
+			assert.lengthOf(styleguru.parse("var x = 1,\n\ty = 2;"), 0);
 		});
 	});
 });

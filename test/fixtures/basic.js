@@ -16,7 +16,7 @@ var myObj = {
 	d: 2.054e2,
 	e: 1.457E-02
 };
-a =(a + a) * (a + a);
+a = (a + a) * (a + a);
 foo = bar ? null : undefined;
 foo = !bar || ~baz && 5;
 quux %= 1 + 2 * (foo + bar) - ((foo >> 16) >>> +3) & -2 | 3 ^ 5 / foo++;
