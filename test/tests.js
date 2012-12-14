@@ -12,7 +12,7 @@ var fixtures = {
 
 suite("Basics", function()
 {
-	suite("parse()", function()
+	suite("smoke tests", function()
 	{
 		test("parse() method should exist", function()
 		{
