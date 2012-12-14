@@ -229,10 +229,11 @@ suite("Default style", function()
 		test("fail on bad whitespace", function()
 		{
 			var result = styleguru.parse("for(var  i in \tfoo) {}");
-			assert.lengthOf(result, 3);
+			assert.lengthOf(result, 4);
 			assert.equal(result[0].type, styleguru.messages.singleSpace);
 			assert.equal(result[1].type, styleguru.messages.singleSpace);
-			assert.equal(result[2].type, styleguru.messages.newlineAfterOpenBrace);
+			assert.equal(result[2].type, styleguru.messages.braceOwnLine);
+			assert.equal(result[3].type, styleguru.messages.braceOwnLine);
 		});
 	});
 
@@ -328,5 +329,37 @@ suite("Default style", function()
 		{
 			assert.lengthOf(styleguru.parse("var x = 1,\n\ty = 2;"), 0);
 		});
+	});
+
+	suite("Blocks", function()
+	{
+		test("braces on their own lines", function()
+		{
+			var block = "{\n\tx++;\n}\n";
+			assert.lengthOf(styleguru.parse(block), 0);
+			assert.lengthOf(styleguru.parse("while(true)\n" + block), 0);
+			assert.lengthOf(styleguru.parse("if(true)\n" + block), 0);
+			assert.lengthOf(styleguru.parse("function a()\n" + block), 0);
+			assert.lengthOf(styleguru.parse("var a = function()\n" + block), 0);
+			assert.lengthOf(styleguru.parse("for(var i = 0; i++; i < 20)\n" + block), 0);
+			assert.lengthOf(styleguru.parse("for(var i in window)\n" + block), 0);
+			assert.lengthOf(styleguru.parse("do\n" + block + "while(true)\n"), 0);
+			assert.lengthOf(styleguru.parse("with(window)\n" + block), 0);
+		});
+
+		test("braces in the wrong place", function()
+		{
+			var block = " {\n\tx++;\n}\n";
+			assert.lengthOf(styleguru.parse(block), 2);
+			assert.lengthOf(styleguru.parse("while(true)" + block), 1);
+			assert.lengthOf(styleguru.parse("if(true)" + block), 1);
+			assert.lengthOf(styleguru.parse("function a()" + block), 1);
+			assert.lengthOf(styleguru.parse("var a = function()" + block), 1);
+			assert.lengthOf(styleguru.parse("for(var i = 0; i++; i < 20)" + block), 1);
+			assert.lengthOf(styleguru.parse("for(var i in window)" + block), 1);
+			assert.lengthOf(styleguru.parse("do" + block + "while(true)\n"), 1);
+			assert.lengthOf(styleguru.parse("with(window)" + block), 1);
+		});
+
 	});
 });
