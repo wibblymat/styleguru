@@ -14,7 +14,7 @@ module.exports = function(grunt) {
 		},
 		watch: {
 			files: "<config:lint.files>",
-			tasks: "lint simplemocha"
+			tasks: "lint test"
 		},
 		jshint: {
 			options: jshint,
