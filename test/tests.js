@@ -139,6 +139,11 @@ suite("Default style", function()
 			assert.equal(styleguru.parse("a	*	b")[0].type,
 				styleguru.messages.whitespace);
 		});
+
+		test("handle parentheses", function()
+		{
+			assert.lengthOf(styleguru.parse("a + (a + b)"), 0);
+		});
 	});
 
 	suite("Symbol unary operators", function()
@@ -199,7 +204,6 @@ suite("Default style", function()
 		test("accepts valid statement", function()
 		{
 			var statement = "for(var i in foo)\n{\n}";
-
 			assert.lengthOf(styleguru.parse(statement), 0);
 		});
 
@@ -224,7 +228,7 @@ suite("Default style", function()
 
 	suite("New expression", function()
 	{
-		test("acceptes valid expression", function()
+		test("accepts valid expression", function()
 		{
 			assert.lengthOf(styleguru.parse("new Array()"), 0);
 		});
@@ -364,5 +368,19 @@ suite("Default style", function()
 			assert.lengthOf(styleguru.parse("with(window)" + block), 1);
 		});
 
+	});
+
+	suite("Functions", function()
+	{
+		test("parameters", function()
+		{
+			assert.lengthOf(styleguru.parse("var cow = function( name, date )\n{\n};"), 2);
+			assert.lengthOf(styleguru.parse("var cow = function( name, date)\n{\n};"), 1);
+			assert.lengthOf(styleguru.parse("var cow = function(name, date )\n{\n};"), 1);
+			assert.lengthOf(styleguru.parse("var cow = function(name, date)\n{\n};"), 0);
+			assert.lengthOf(styleguru.parse("var cow = function(name,date)\n{\n};"), 1);
+			assert.lengthOf(styleguru.parse("var cow = function( )\n{\n};"), 1);
+			assert.lengthOf(styleguru.parse("var cow = function()\n{\n};"), 0);
+		});
 	});
 });

@@ -149,8 +149,6 @@ function red()
 	return;
 }
 
-debugger;
-
 with(moo)
 {
 	foo = bar;
