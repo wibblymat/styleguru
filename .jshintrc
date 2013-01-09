@@ -8,7 +8,7 @@
 	"indent": 4,
 	"jquery": true,
 	"latedef": true,
-	"maxcomplexity": 3,
+	"maxcomplexity": 4,
 	"maxlen": 100,
 	"maxstatements": 15,
 	"maxdepth": 2,

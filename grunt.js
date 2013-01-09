@@ -30,6 +30,8 @@ module.exports = function(grunt) {
 					reporter: "spec"
 				}
 			},
+			// To actually run code coverage, run:
+			//	STYLEGURU_COVERAGE=1 grunt coverage | head -n -1 | tail -n +2 > coverage.html
 			coverage: {
 				src: "test/*.js",
 				options: {
