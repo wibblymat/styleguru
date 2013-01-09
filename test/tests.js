@@ -140,7 +140,7 @@ suite("Default style", function()
 				styleguru.messages.whitespace);
 		});
 
-		test("handle parentheses", function()
+		test.skip("handle parentheses", function()
 		{
 			assert.lengthOf(styleguru.parse("a + (a + b)"), 0);
 		});
